@@ -1,74 +1,91 @@
 # 🛒 MarketPlace - Vente entre particuliers
 
-Une plateforme de vente simplifiée où les utilisateurs peuvent acheter et vendre des objets d'occasion.
+[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/tdelminot/marketplace)
+[![React](https://img.shields.io/badge/React-18-61DAFB)](https://reactjs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-18-339933)](https://nodejs.org/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue)](https://www.docker.com/)
 
-## ✨ Fonctionnalités
+##  Description
 
-### 👤 Visiteur
-- Navigation libre dans le catalogue
-- Visualisation des produits (photos, prix, description, argumentaire vendeur)
-- Interface responsive
+MarketPlace est une application full-stack de vente entre particuliers développée pour démontrer des compétences en développement full-stack avec des architectures modernes.
 
-### 👥 Utilisateur authentifié
-- Dépôt d'annonces avec upload d'images
-- Formulaire détaillé (titre, description, argumentaire, prix, catégorie)
-- Gestion des annonces (modification/suppression)
-- Tableau de bord vendeur avec statistiques
+##  Fonctionnalités
 
-### 🛠️ Architecture
-- Clean Architecture (backend)
-- MVVM (frontend)
-- Repository Pattern
+### 👤 Authentification
+- Inscription et connexion sécurisées
+- JWT pour la gestion des sessions
+- Rôle utilisateur / vendeur
 
-## 🚀 Installation
+###  Produits
+- Catalogue de produits avec images
+- Filtres par catégorie
+- Recherche par mot-clé
+- Détail du produit avec galerie
+
+### 🛒 Transactions
+- Simulation d'achat de produits
+- Changement de statut "Disponible" → "Vendu"
+- Message de confirmation
+
+###  Dashboard Vendeur
+- Statistiques : produits, revenus, vues
+- Taux de conversion
+- Liste des produits publiés
+
+##  Architecture
+
+### Backend (Clean Architecture)
+Domain Layer (Entities, Repositories)
+↓
+Application Layer (Use Cases)
+↓
+Infrastructure Layer (Database, API)
+↓
+Presentation Layer (Controllers, Routes)
+
+text
+
+### Frontend (MVVM)
+Views (React Components)
+↓
+ViewModels (MobX State)
+↓
+Models (Data Layer)
+
+text
+
+##  Stack Technique
+
+| Catégorie | Technologies |
+|-----------|--------------|
+| Frontend | React 18, Vite, MobX, Framer Motion |
+| Backend | Node.js, Express, JWT |
+| Database | MySQL |
+| DevOps | Docker, docker-compose |
+| Architecture | Clean Architecture + MVVM |
+
+##  Docker
 
 ```bash
-# Cloner
-git clone https://github.com/tdelminot/marketplace.git
-cd marketplace
-
-# Backend
-cd backend
-npm install
-npm run dev
-
-# Frontend (nouveau terminal)
-cd frontend
-npm install
-npm start
-🐳 Docker
-bash
+# Démarrer l'application
 docker-compose up -d
-📱 Accès
-Frontend: http://localhost:3000
 
-Backend API: http://localhost:5000
+# Arrêter
+docker-compose down
 
-🛠️ Stack
-Backend
-Node.js + Express
-
-MySQL
-
-JWT Authentication
-
-Clean Architecture
-
-Frontend
-React + Vite
-
-MobX (MVVM)
-
-Framer Motion
-
-📊 Statistiques vendeur
-Nombre de produits actifs
-
-Revenus totaux
-
-Vues totales
-
-Taux de conversion
-
-⭐ Développé par Tafara Delminot
+# Voir les logs
+docker-compose logs -f
+📊 Git Flow
+text
+main (production)
+  └── develop (intégration)
+       ├── feature/auth
+       ├── feature/products
+       ├── feature/purchase
+       ├── feature/dashboard
+       └── feature/docker
+📞 Contact
+tdelminot@gmail.com
  
+
+⭐ Développé par Tafara Delminot  
