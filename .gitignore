@@ -1,0 +1,29 @@
+# Dépendances
+node_modules/
+package-lock.json
+
+# Environnement
+.env
+.env.local
+
+# Uploads
+backend/uploads/
+backend/processed/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Build
+dist/
+build/
+.vite/

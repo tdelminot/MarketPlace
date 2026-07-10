@@ -1,0 +1,87 @@
+class ProductModel {
+  constructor(data) {
+    this.id = data.id;
+    this.sellerId = data.sellerId;
+    this.seller = data.seller || null;
+    this.title = data.title;
+    this.description = data.description || '';
+    this.sellerArgs = data.sellerArgs || '';
+    this.price = data.price;
+    this.category = data.category || 'other';
+    this.images = this.parseImages(data.images);
+    this.condition = data.condition || 'used';
+    this.location = data.location || '';
+    this.status = data.status || 'active';
+    this.views = data.views || 0;
+    this.createdAt = data.createdAt;
+    this.updatedAt = data.updatedAt;
+  }
+
+  parseImages(images) {
+    if (!images) return [];
+    if (Array.isArray(images)) return images;
+    if (typeof images === 'string') {
+      try {
+        const parsed = JSON.parse(images);
+        return Array.isArray(parsed) ? parsed : [parsed];
+      } catch {
+        return [images];
+      }
+    }
+    return [];
+  }
+
+  get formattedPrice() {
+    return `${this.price}€`;
+  }
+
+  get mainImage() {
+    if (this.images && this.images.length > 0) {
+      const img = this.images[0];
+      // Si l'URL commence par /uploads/, la conserver
+      if (typeof img === 'string' && img.startsWith('/uploads/')) {
+        return img;
+      }
+      return img;
+    }
+    return null;
+  }
+
+  get conditionLabel() {
+    const labels = {
+      'new': 'Neuf',
+      'like-new': 'Comme neuf',
+      'good': 'Bon état',
+      'fair': 'Correct',
+      'used': 'Usagé',
+      'damaged': 'Abîmé'
+    };
+    return labels[this.condition] || this.condition;
+  }
+
+  toJSON() {
+    return {
+      id: this.id,
+      sellerId: this.sellerId,
+      seller: this.seller,
+      title: this.title,
+      description: this.description,
+      sellerArgs: this.sellerArgs,
+      price: this.price,
+      category: this.category,
+      images: this.images,
+      condition: this.condition,
+      location: this.location,
+      status: this.status,
+      views: this.views,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt
+    };
+  }
+
+  static fromJSON(json) {
+    return new ProductModel(json);
+  }
+}
+
+export default ProductModel;
