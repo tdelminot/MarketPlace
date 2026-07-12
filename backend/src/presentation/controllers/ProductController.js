@@ -1,6 +1,8 @@
+// backend/src/presentation/controllers/ProductController.js
 const CreateProductUseCase = require('../../application/useCases/CreateProductUseCase');
 const GetProductsUseCase = require('../../application/useCases/GetProductsUseCase');
 const PurchaseProductUseCase = require('../../application/useCases/PurchaseProductUseCase');
+const { cloudinary } = require('../../infrastructure/upload/cloudinary.config');
 
 class ProductController {
   constructor(productRepository, userRepository) {
@@ -15,14 +17,12 @@ class ProductController {
     try {
       const { title, description, sellerArgs, price, category, condition, location } = req.body;
       
-      // Vérifier l'utilisateur
       if (!req.user) {
         return res.status(401).json({ success: false, error: 'Utilisateur non authentifié' });
       }
       
       const sellerId = req.user.id;
       console.log('🛒 Création produit par:', sellerId);
-      console.log('📦 Données:', { title, price, category, condition });
 
       if (!title || !price) {
         return res.status(400).json({ 
@@ -31,8 +31,9 @@ class ProductController {
         });
       }
 
-      // Récupérer les images uploadées
-      const images = req.files ? req.files.map(f => `/uploads/${f.filename}`) : [];
+      // 🔥 Récupérer les URLs Cloudinary des images uploadées
+      const images = req.files ? req.files.map(file => file.path) : [];
+      console.log('📸 Images uploadées sur Cloudinary:', images);
 
       const product = await this.createUseCase.execute({
         sellerId,
@@ -41,7 +42,7 @@ class ProductController {
         sellerArgs: sellerArgs || '',
         price: parseFloat(price),
         category: category || 'other',
-        images,
+        images, // URLs Cloudinary
         condition: condition || 'good',
         location: location || ''
       });
@@ -103,25 +104,25 @@ class ProductController {
   }
 
   async purchase(req, res) {
-  try {
-    const { productId } = req.params;
-    const buyerId = req.user.id;
-    
-    console.log(`🛒 Achat du produit ${productId} par ${buyerId}`);
+    try {
+      const { productId } = req.params;
+      const buyerId = req.user.id;
+      
+      console.log(`🛒 Achat du produit ${productId} par ${buyerId}`);
 
-    const result = await this.purchaseUseCase.execute(productId, buyerId);
-    
-    console.log(`✅ Achat réussi:`, result);
-    
-    res.json({
-      success: true,
-      transaction: result
-    });
-  } catch (error) {
-    console.error('❌ Erreur purchase:', error);
-    res.status(400).json({ success: false, error: error.message });
+      const result = await this.purchaseUseCase.execute(productId, buyerId);
+      
+      console.log(`✅ Achat réussi:`, result);
+      
+      res.json({
+        success: true,
+        transaction: result
+      });
+    } catch (error) {
+      console.error('❌ Erreur purchase:', error);
+      res.status(400).json({ success: false, error: error.message });
+    }
   }
-}
 
   async delete(req, res) {
     try {
@@ -139,11 +140,37 @@ class ProductController {
         });
       }
 
+      // 🔥 Supprimer les images de Cloudinary
+      if (product.images && product.images.length > 0) {
+        for (const imageUrl of product.images) {
+          try {
+            // Extraire le public_id de l'URL Cloudinary
+            const publicId = imageUrl.split('/').slice(-2).join('/').split('.')[0];
+            await cloudinary.uploader.destroy(publicId);
+            console.log(`🗑️ Image supprimée de Cloudinary: ${publicId}`);
+          } catch (err) {
+            console.warn('⚠️ Erreur suppression image Cloudinary:', err.message);
+          }
+        }
+      }
+
       await this.productRepository.delete(id);
       
       res.json({ success: true, message: 'Produit supprimé' });
     } catch (error) {
       console.error('❌ Erreur delete:', error);
+      res.status(500).json({ success: false, error: error.message });
+    }
+  }
+
+  // 🔥 Nouvelle méthode pour supprimer une image spécifique
+  async deleteImage(req, res) {
+    try {
+      const { publicId } = req.params;
+      const result = await cloudinary.uploader.destroy(publicId);
+      res.json({ success: true, result });
+    } catch (error) {
+      console.error('❌ Erreur deleteImage:', error);
       res.status(500).json({ success: false, error: error.message });
     }
   }
