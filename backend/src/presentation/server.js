@@ -68,7 +68,13 @@ app.use('/api/auth', authLimiter);
 
 // CORS
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:5000'],
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:5173', 
+    'http://localhost:5000',
+    'https://marketplace-app-tdelminot.netlify.app',  
+    'https://marketplace-acqr.onrender.com'
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept']

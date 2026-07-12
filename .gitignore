@@ -8,6 +8,7 @@ node_modules/
 # Uploads
 backend/uploads
 backend/processed/
+backend/data.sql
 
 # Logs
 *.log
