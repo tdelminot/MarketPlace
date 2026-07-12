@@ -1,5 +1,6 @@
 const mysql = require('mysql2/promise');
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../../../.env') });
 
 class MySQLConnection {
   constructor() {
@@ -8,20 +9,29 @@ class MySQLConnection {
 
   async connect() {
     try {
+      console.log('🔌 Tentative de connexion à MySQL Clever Cloud...');
+      console.log(`📡 Host: ${process.env.DB_HOST}`);
+      console.log(`🔢 Port: ${process.env.DB_PORT}`);
+      console.log(`📚 Database: ${process.env.DB_NAME}`);
+      console.log(`👤 User: ${process.env.DB_USER}`);
+
       this.pool = mysql.createPool({
-        host: process.env.DB_HOST || 'localhost',
-        user: process.env.DB_USER || 'root',
-        password: process.env.DB_PASSWORD || '',
-        database: process.env.DB_NAME || 'marketplace_db',
+        host: process.env.DB_HOST,
+        port: parseInt(process.env.DB_PORT) || 3306,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
         waitForConnections: true,
         connectionLimit: 10,
         queueLimit: 0,
         enableKeepAlive: true,
-        keepAliveInitialDelay: 0
+        keepAliveInitialDelay: 0,
+        connectTimeout: 30000
       });
 
       const connection = await this.pool.getConnection();
-      console.log('✅ Connecté à MySQL');
+      console.log('✅ Connecté à MySQL Clever Cloud avec succès !');
+      console.log(`📊 Version MySQL: ${connection.serverVersion || '8.0'}`);
       connection.release();
       
       return this.pool;
