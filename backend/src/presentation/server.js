@@ -1,4 +1,5 @@
-﻿require('dotenv').config();
+﻿ 
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -6,7 +7,6 @@ const rateLimit = require('express-rate-limit');
 const path = require('path');
 const fs = require('fs-extra');
 const xss = require('xss');
-const sanitize = require('sanitize-html');
 
 const dbConnection = require('../infrastructure/database/mysqlConnection');
 const UserRepository = require('../infrastructure/database/repositories/UserRepository');
@@ -23,9 +23,7 @@ const statsRoutes = require('./routes/stats.routes');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
- 
-//  SECURITÉ - HELMET (Headers HTTP sécurisés)
- 
+//  SECURITÉ - HELMET
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -43,9 +41,7 @@ app.use(helmet({
   crossOriginOpenerPolicy: { policy: "unsafe-none" }
 }));
 
- 
 //  SECURITÉ - RATE LIMITING
- 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
@@ -70,9 +66,7 @@ const authLimiter = rateLimit({
 
 app.use('/api/auth', authLimiter);
 
- 
 // CORS
- 
 app.use(cors({
   origin: ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:5000'],
   credentials: true,
@@ -80,9 +74,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
 }));
 
- 
-// 4. MIDDLEWARE DE SANITIZATION
- 
+//  MIDDLEWARE - XSS PROTECTION 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
@@ -90,10 +82,7 @@ app.use((req, res, next) => {
   if (req.body) {
     const clean = (obj) => {
       if (typeof obj === 'string') {
-        return sanitize(obj, {
-          allowedTags: [],
-          allowedAttributes: {}
-        });
+        return xss(obj);
       }
       if (typeof obj === 'object' && obj !== null) {
         Object.keys(obj).forEach(key => {
@@ -107,9 +96,7 @@ app.use((req, res, next) => {
   next();
 });
 
- 
-// STATIC FILES - Avec headers CORS
- 
+// STATIC FILES
 app.use('/uploads', (req, res, next) => {
   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -118,9 +105,7 @@ app.use('/uploads', (req, res, next) => {
   next();
 }, express.static(path.join(__dirname, '../../uploads')));
 
- 
-//  REPOSITORIES & CONTROLLERS
- 
+// REPOSITORIES & CONTROLLERS
 const userRepository = new UserRepository(dbConnection);
 const productRepository = new ProductRepository(dbConnection);
 
@@ -128,16 +113,12 @@ const authController = new AuthController(userRepository);
 const productController = new ProductController(productRepository, userRepository);
 const statsController = new StatsController(productRepository, userRepository);
 
- 
-//   ROUTES
- 
+// ROUTES
 app.use('/api/auth', authRoutes(authController));
 app.use('/api/products', productRoutes(productController));
 app.use('/api/stats', statsRoutes(statsController));
 
- 
-//  HEALTH CHECK
- 
+// HEALTH CHECK
 app.get('/health', (req, res) => {
   res.json({ 
     status: 'OK', 
@@ -150,9 +131,7 @@ app.get('/health', (req, res) => {
   });
 });
 
- 
-//   ERROR HANDLER
-
+// ERROR HANDLER
 app.use((err, req, res, next) => {
   console.error('❌ Erreur:', err);
   
@@ -169,9 +148,7 @@ app.use((err, req, res, next) => {
   });
 });
 
- 
-//   DÉMARRAGE
- 
+// DÉMARRAGE
 const startServer = async () => {
   try {
     await dbConnection.connect();
