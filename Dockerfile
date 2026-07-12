@@ -2,10 +2,14 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install --only=production
+# Copier le package.json du backend
+COPY backend/package*.json ./backend/
+RUN cd backend && npm install --production
+COPY backend/ ./backend/
 
-COPY . .
+
+# Définir le répertoire de travail
+WORKDIR /app/backend
 
 EXPOSE 5000
 
