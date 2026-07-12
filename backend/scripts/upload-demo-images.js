@@ -19,13 +19,10 @@ async function uploadImages() {
     console.log('📸 Upload des images de démonstration sur Cloudinary...');
     console.log(`📁 Dossier: ${uploadDir}`);
     
-    // Lire tous les fichiers du dossier
     const files = fs.readdirSync(uploadDir);
     
-    // Filtrer uniquement les fichiers JPG (les vraies photos)
-    const jpgFiles = files.filter(f => 
-      f.endsWith('.jpg') && !f.includes('_1')
-    );
+    // ✅ Filtrer UNIQUEMENT les fichiers JPG (supprimer le filtre _1)
+    const jpgFiles = files.filter(f => f.endsWith('.jpg'));
     
     console.log(`📄 ${jpgFiles.length} fichiers JPG trouvés`);
     
@@ -37,13 +34,11 @@ async function uploadImages() {
       
       try {
         console.log(`📤 Uploading: ${file}...`);
-        
         const result = await cloudinary.uploader.upload(filePath, {
           folder: 'marketplace/demo',
           public_id: path.parse(file).name,
           overwrite: true
         });
-        
         console.log(`✅ ${file} → ${result.secure_url}`);
         uploaded++;
       } catch (error) {
