@@ -9,7 +9,7 @@ import authViewModel from '../../viewmodels/AuthViewModel';
 import ProductViewModel from '../../viewmodels/ProductViewModel';
 
 // Utiliser l'URL de l'API depuis VITE_API_URL
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = 'https://marketplace-acqr.onrender.com/api';
 const PLACEHOLDER_IMAGE = '/images/placeholder.svg';
 
 const productViewModel = new ProductViewModel();
@@ -27,7 +27,7 @@ const ProductDetail = observer(() => {
   const product = productViewModel.selectedProduct;
   const isLoading = productViewModel.isLoading;
 
-  // ✅ Fonction pour obtenir l'URL de l'image (supporte Cloudinary et local)
+  //  Fonction pour obtenir l'URL de l'image (supporte Cloudinary et local)
   const getImageUrl = (image) => {
     if (!image) return PLACEHOLDER_IMAGE;
     
