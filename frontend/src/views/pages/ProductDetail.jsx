@@ -7,6 +7,8 @@ import { FiMapPin, FiTag, FiEye, FiArrowLeft, FiCalendar, FiShoppingCart } from 
 import toast from 'react-hot-toast';
 import authViewModel from '../../viewmodels/AuthViewModel';
 import ProductViewModel from '../../viewmodels/ProductViewModel';
+console.log(' PRODUCTDETAIL CHARGÉ - VERSION 2.0 - 2026-07-13 11:30 ');
+
 
 // Utiliser l'URL de l'API depuis VITE_API_URL
 const API_BASE_URL = 'https://marketplace-acqr.onrender.com/api';
@@ -33,7 +35,7 @@ const ProductDetail = observer(() => {
     
     // Si c'est déjà une URL complète (Cloudinary), la garder
     if (typeof image === 'string' && (image.startsWith('http://') || image.startsWith('https://'))) {
-      return image;
+      return `${image}?v=2`;
     }
     
     // Si c'est un chemin local, utiliser l'URL de l'API
